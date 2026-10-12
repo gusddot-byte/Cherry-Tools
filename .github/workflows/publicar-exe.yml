@@ -1,0 +1,31 @@
+
+name: Publicar Cherrybox v2.0
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Compilar EXE
+        run: dotnet publish EulerSSTools.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+
+      - name: Publicar EXE
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.0
+          name: Cherrybox - Euler SS Tools v2.0
+          files: publish/EulerSSTools.exe
+          fail_on_unmatched_files: true
